@@ -404,14 +404,15 @@ mod tests {
         publish(&source, "v1", &[("a.png", b"AAAA")]);
         sync_once(&source, &cache).unwrap();
 
-        fs::remove_dir_all(&source).unwrap(); // РїР°РїРєР° "РѕС‚РІР°Р»РёР»Р°СЃСЊ"
+        fs::remove_dir_all(&source).unwrap(); // папка "отвалилась" целиком
 
-        // Новое поведение: битый файл (несошедшийся хеш) НЕ роняет показ —
-        // синхронизация проходит, а бракованный файл просто не попадает в кэш.
-        let report = sync_once(&source, &cache).unwrap();
-        assert!(!report.fetched.contains(&"b.png".to_string()));
+        // Источник недоступен (папки больше нет) — синхронизация должна
+        // вернуть ошибку, а не тихо "притвориться", что всё в порядке.
+        // Но при этом рабочий кэш она трогать не должна.
+        let result = sync_once(&source, &cache);
+        assert!(matches!(result, Err(SyncError::SourceUnavailable(_))));
 
-        // СЃС‚Р°СЂС‹Р№ РєСЌС€ РЅРёРєСѓРґР° РЅРµ РґРµР»СЃСЏ Рё СЂР°Р±РѕС‡РёР№
+        // старый кэш никуда не делся и рабочий
         let active = active_cache_dir(&cache);
         assert_eq!(fs::read(active.join("a.png")).unwrap(), b"AAAA");
 
