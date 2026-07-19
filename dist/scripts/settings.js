@@ -88,7 +88,7 @@ function setting(name) {
     //    значения корректно читаются, валидируются и имеют дефолты.
     case "border_mode": {
       const v = APP_SETTINGS[name];
-      return v === "off" || v === "solid" || v === "rainbow" ? v : "rainbow";
+      return ["off", "solid", "pulse", "flow", "rainbow"].includes(v) ? v : "rainbow";
     }
 
     case "border_color": {

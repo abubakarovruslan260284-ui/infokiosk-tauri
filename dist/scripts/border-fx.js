@@ -16,7 +16,9 @@
     const S = typeof APP_SETTINGS !== "undefined" && APP_SETTINGS ? APP_SETTINGS : {};
 
     const rawMode = S["border_mode"] || "rainbow";
-    const mode = ["off", "solid", "rainbow"].includes(rawMode) ? rawMode : "rainbow";
+    const mode = ["off", "solid", "pulse", "flow", "rainbow"].includes(rawMode)
+      ? rawMode
+      : "rainbow";
 
     const color = S["border_color"] || "#e73a7c";
     const speed = num(S["border_speed"], 6) || 6;
@@ -24,7 +26,7 @@
     let intensity = num(S["border_intensity"], 0.7);
     intensity = Math.min(1, Math.max(0, intensity));
 
-    glowEl.classList.remove("mode-off", "mode-solid", "mode-rainbow");
+    glowEl.classList.remove("mode-off", "mode-solid", "mode-pulse", "mode-flow", "mode-rainbow");
     glowEl.classList.add("mode-" + mode);
     glowEl.style.setProperty("--glow-speed", speed + "s");
     glowEl.style.setProperty(
