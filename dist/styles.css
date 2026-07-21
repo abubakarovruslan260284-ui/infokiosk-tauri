@@ -43,32 +43,20 @@ img{display:block}
   box-shadow:0 3vh 7vh -2vh rgba(0,0,0,.45)}
 
 /* ===== подсветка рамки (F3 -> "Подсветка рамки"): off / solid / rainbow =====
-   Реализация через вращающийся conic-gradient под маской — анимация
-   идёт только через transform/filter (compositor), это дёшево даже на
-   слабом железе: не требует пересчёта layout/paint на каждый кадр. */
+   По просьбе заказчика — красится вся тёмно-синяя подложка экрана
+   ожидания целиком (а не тонкая полоска вокруг слайдера). Слой
+   растянут на весь #waiting, слайдер и призыв со сканером лежат
+   поверх него (z-index) и подложку не перекрывают. Анимация идёт
+   через transform/filter (compositor) — дёшево даже на слабом железе. */
 #slider-glow{
-  /* Раньше рамка занимала РОВНО ту же область экрана, что и #slider,
-     а у слайдов непрозрачный белый фон — он полностью перекрывал
-     тонкое кольцо свечения, поэтому эффект не был виден вообще ни в
-     одном режиме. Теперь рамка чуть больше слайдера со всех сторон,
-     и кольцо свечения оказывается снаружи белой карточки, а не под ней. */
-  position:absolute;top:calc(3.5vh - 2.6vw);left:calc(3.5vw - 2.6vw);right:calc(3.5vw - 2.6vw);bottom:calc(27vh - 2.6vw);
-  border-radius:6.5vw;pointer-events:none;z-index:0;opacity:0;
+  position:absolute;inset:0;overflow:hidden;
+  pointer-events:none;z-index:0;opacity:0;
   transition:opacity .4s ease;
 }
 #slider-glow::before{
-  /* Толщина кольца — это padding ЗДЕСЬ, а не на родителе: кольцо рисуется
-     как разница между content-box (внутри padding) и border-box (весь
-     блок) этого же псевдоэлемента. Раньше padding стоял на родителе
-     #slider-glow, у которого нет своей заливки, — у самого ::before
-     padding был нулевой, поэтому content-box и border-box совпадали и
-     кольцо получалось почти нулевой ширины (был виден только тонкий
-     контур на изгибах от округления пикселей). */
-  content:"";position:absolute;inset:0;padding:2vw;border-radius:inherit;
+  content:"";position:absolute;top:-20%;left:-20%;right:-20%;bottom:-20%;
   background:conic-gradient(from 0deg,#ff2d55,#ff9500,#ffcc00,#34c759,#00c7be,#007aff,#af52de,#ff2d55);
-  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
-  -webkit-mask-composite:xor;mask-composite:exclude;
-  filter:blur(.5vw) saturate(1.3);
+  filter:blur(1vw) saturate(1.3);
   animation:slider-glow-spin var(--glow-speed,6s) linear infinite;
 }
 /* Реальную непрозрачность задаёт border-fx.js (inline opacity =
@@ -78,19 +66,19 @@ img{display:block}
 #slider-glow.mode-pulse,
 #slider-glow.mode-flow{opacity:1}
 
-/* Один цвет — статичное кольцо выбранного цвета */
+/* Один цвет — вся подложка залита выбранным цветом */
 #slider-glow.mode-solid::before{
-  background:conic-gradient(from 0deg,var(--glow-color,#e73a7c),var(--glow-color,#e73a7c));
+  background:var(--glow-color,#e73a7c);
   animation:none;
 }
 /* Пульсация — тот же цвет, плавно пульсирует яркость */
 #slider-glow.mode-pulse::before{
-  background:conic-gradient(from 0deg,var(--glow-color,#e73a7c),var(--glow-color,#e73a7c));
+  background:var(--glow-color,#e73a7c);
   animation:slider-glow-pulse var(--glow-speed,6s) ease-in-out infinite;
 }
 /* Переливание — выбранный цвет плавно перетекает по спектру */
 #slider-glow.mode-flow::before{
-  background:conic-gradient(from 0deg,var(--glow-color,#e73a7c),var(--glow-color,#e73a7c));
+  background:var(--glow-color,#e73a7c);
   animation:slider-glow-hue var(--glow-speed,6s) linear infinite;
 }
 @keyframes slider-glow-spin{to{transform:rotate(360deg)}}
