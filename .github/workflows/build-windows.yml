@@ -81,7 +81,7 @@ jobs:
           rustup toolchain install stable --profile minimal --no-self-update
           cd src-tauri
           $meta = cargo +stable metadata --format-version 1 | ConvertFrom-Json
-          foreach ($targetName in @("toml_datetime", "toml_edit", "getrandom", "jobserver")) {
+          foreach ($targetName in @("toml_datetime", "toml_edit", "getrandom", "jobserver", "proc-macro-crate")) {
             Write-Host "===== $targetName ====="
             $targetPkgs = $meta.packages | Where-Object { $_.name -eq $targetName }
             foreach ($pkg in $targetPkgs) {
