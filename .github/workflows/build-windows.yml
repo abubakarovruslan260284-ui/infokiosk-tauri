@@ -135,12 +135,27 @@ jobs:
           }
           $lockText = Get-Content "Cargo.lock" -Raw
           $pkgPattern = [regex]'(?ms)^\[\[package\]\]\r?\nname = "([^"]+)"\r?\nversion = "([^"]+)"'
+          $anyFailed = $false
           foreach ($m in $pkgPattern.Matches($lockText)) {
             $pkgName = $m.Groups[1].Value
             $pkgVer = $m.Groups[2].Value
             if ($desired.ContainsKey($pkgName) -and $pkgVer -ne $desired[$pkgName]) {
               Write-Host "Понижаю $pkgName с $pkgVer до $($desired[$pkgName])"
               cargo update -p "${pkgName}:${pkgVer}" --precise $desired[$pkgName]
+              if ($LASTEXITCODE -ne 0) {
+                Write-Host "!!! НЕ ПОЛУЧИЛОСЬ понизить $pkgName до $($desired[$pkgName]) (код $LASTEXITCODE) — см. текст ошибки выше !!!"
+                $anyFailed = $true
+              }
+            }
+          }
+          Write-Host "===== Проверка после понижения ====="
+          $afterText = Get-Content "Cargo.lock" -Raw
+          foreach ($m in $pkgPattern.Matches($afterText)) {
+            $pkgName = $m.Groups[1].Value
+            $pkgVer = $m.Groups[2].Value
+            if ($desired.ContainsKey($pkgName)) {
+              $mark = if ($pkgVer -eq $desired[$pkgName]) { "OK" } else { "!!! ВСЁ ЕЩЁ НЕ ТА ВЕРСИЯ !!!" }
+              Write-Host "$pkgName = $pkgVer (нужно $($desired[$pkgName])) $mark"
             }
           }
 
