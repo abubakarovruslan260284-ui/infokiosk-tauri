@@ -23,41 +23,6 @@ serde_json = "1"
 tokio = { version = "1", features = ["rt-multi-thread", "time", "macros"] }
 ureq = { version = "2", default-features = false }
 
-# ===== Закреплённые версии мелких вспомогательных пакетов =====
-# Мы явно не используем их напрямую — они тянутся транзитивно через
-# tauri и его плагины. Их новые версии просят более новый Cargo/Rust,
-# чем закреплённый у нас 1.77.2 (нужен ради Windows 7/8/8.1 на
-# киосках) — иначе сборка падает с ошибкой вида "feature `edition2024`
-# is required". Ниже — последние версии каждого пакета, которые ещё
-# совместимы с 1.77.2.
-time = "=0.3.41"
-toml = "=0.9.8"
-toml_writer = "=1.0.7"
-toml_parser = "=1.0.10"
-serde_spanned = "=1.0.4"
-embed-resource = "=3.0.8"
-tauri-winres = "=0.3.5"
-proc-macro-crate = "=2.0.2"
-idna_adapter = "=1.1.0"
-indexmap = "=2.11.4"
-hashbrown = "=0.16.1"
-windows-core = "=0.61.2"
-uuid = "=1.20.0"
-plist = "=1.7.4"
-reqwest = "=0.13.3"
-cargo_metadata = "=0.19.0"
-dlopen2 = "=0.8.0"
-derive_more = "=2.0.0"
-serde_with = "=3.15.0"
-rand = "=0.9.4"
-rand_core = "=0.9.5"
-rand_chacha = "=0.9.0"
-rand_pcg = "=0.9.0"
-getrandom = "=0.3.4"
-quinn-proto = "=0.11.15"
-zeroize = "=1.8.2"
-toml_datetime = "=0.7.5"
-
 # наш проверенный движок синхронизации (см. kiosk_sync/ — 13 тестов,
 # включая эмуляцию сети/повреждённой докачки/атомарной подмены)
 kiosk_sync = { path = "kiosk_sync" }
@@ -65,6 +30,70 @@ kiosk_sync = { path = "kiosk_sync" }
 [features]
 # custom-protocol нужен для релизной сборки (см. build.rs / tauri-build)
 custom-protocol = ["tauri/custom-protocol"]
+
+# ===== Закреплённые версии мелких вспомогательных пакетов =====
+# Мы явно не используем их напрямую — они тянутся транзитивно через
+# tauri и его плагины. Их новые версии просят более новый Cargo/Rust,
+# чем закреплённый у нас 1.77.2 (нужен ради Windows 7/8/8.1 на
+# киосках) — иначе сборка падает с ошибкой вида "feature `edition2024`
+# is required". Ниже — последние версии каждого пакета, которые ещё
+# совместимы с 1.77.2.
+[dependencies.time]
+version = "=0.3.41"
+[dependencies.toml]
+version = "=0.9.8"
+[dependencies.toml_writer]
+version = "=1.0.7"
+[dependencies.toml_parser]
+version = "=1.0.10"
+[dependencies.toml_datetime]
+version = "=0.7.5"
+[dependencies.serde_spanned]
+version = "=1.0.4"
+[dependencies.toml_edit]
+version = "=0.20.2"
+[dependencies.embed-resource]
+version = "=3.0.8"
+[dependencies.tauri-winres]
+version = "=0.3.5"
+[dependencies.proc-macro-crate]
+version = "=2.0.2"
+[dependencies.idna_adapter]
+version = "=1.1.0"
+[dependencies.indexmap]
+version = "=2.11.4"
+[dependencies.hashbrown]
+version = "=0.16.1"
+[dependencies.windows-core]
+version = "=0.61.2"
+[dependencies.uuid]
+version = "=1.20.0"
+[dependencies.plist]
+version = "=1.7.4"
+[dependencies.reqwest]
+version = "=0.13.3"
+[dependencies.cargo_metadata]
+version = "=0.19.0"
+[dependencies.dlopen2]
+version = "=0.8.0"
+[dependencies.derive_more]
+version = "=2.0.0"
+[dependencies.serde_with]
+version = "=3.15.0"
+[dependencies.rand]
+version = "=0.9.4"
+[dependencies.rand_core]
+version = "=0.9.5"
+[dependencies.rand_chacha]
+version = "=0.9.0"
+[dependencies.rand_pcg]
+version = "=0.9.0"
+[dependencies.getrandom]
+version = "=0.3.4"
+[dependencies.quinn-proto]
+version = "=0.11.15"
+[dependencies.zeroize]
+version = "=1.8.2"
 
 [profile.release]
 panic = "abort"
