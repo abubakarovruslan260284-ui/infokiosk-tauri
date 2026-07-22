@@ -102,6 +102,8 @@ version = "=0.4.1"
 version = "=0.6.2"
 [dependencies.windows-registry]
 version = "=0.5.3"
+[dependencies.cargo-platform]
+version = "=0.1.8"
 
 # Примечание про proc-macro-crate: пакет num_enum_derive (тянется
 # транзитивно) допускает у себя версии от 1 до 3 включительно, и Cargo
