@@ -132,6 +132,7 @@ jobs:
             "windows-registry" = "0.5.3"
             "quinn-proto" = "0.11.14"
             "cargo-platform" = "0.1.8"
+            "hyper-rustls" = "0.27.7"
           }
           $lockText = Get-Content "Cargo.lock" -Raw
           $pkgPattern = [regex]'(?ms)^\[\[package\]\]\r?\nname = "([^"]+)"\r?\nversion = "([^"]+)"'
