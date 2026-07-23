@@ -106,6 +106,8 @@ version = "=0.5.3"
 version = "=0.1.8"
 [dependencies.hyper-rustls]
 version = "=0.27.7"
+[dependencies.open]
+version = "=5.3.2"
 
 # Примечание про proc-macro-crate: пакет num_enum_derive (тянется
 # транзитивно) допускает у себя версии от 1 до 3 включительно, и Cargo
