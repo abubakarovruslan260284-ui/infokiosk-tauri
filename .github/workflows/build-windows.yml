@@ -57,9 +57,21 @@ jobs:
         run: |
           $cabUrl = "https://github.com/westinyang/WebView2RuntimeArchive/releases/download/109.0.1518.78/Microsoft.WebView2.FixedVersionRuntime.109.0.1518.78.x64.cab"
           Invoke-WebRequest -Uri $cabUrl -OutFile "webview2-fixed.cab"
-          $dest = "src-tauri/Microsoft.WebView2.FixedVersionRuntime.109.0.1518.78.x64"
-          New-Item -ItemType Directory -Force -Path $dest | Out-Null
-          expand webview2-fixed.cab -F:* $dest
+          # Внутри архива УЖЕ лежит папка с полным именем
+          # Microsoft.WebView2.FixedVersionRuntime.109.0.1518.78.x64 —
+          # поэтому распаковываем прямо в src-tauri, а не в папку с тем
+          # же именем (иначе получается "папка в папке", установщик
+          # кладёт её не туда, и программа на киоске не находит свой
+          # встроенный браузер — именно это и случилось при первой
+          # проверке на живом киоске).
+          expand webview2-fixed.cab -F:* src-tauri
+          $exe = "src-tauri/Microsoft.WebView2.FixedVersionRuntime.109.0.1518.78.x64/msedgewebview2.exe"
+          if (-not (Test-Path $exe)) {
+            Write-Host "ОШИБКА: после распаковки не найден $exe — структура архива не та, что ожидалась. Содержимое src-tauri:"
+            Get-ChildItem -Recurse -Depth 2 src-tauri | Select-Object FullName | Out-String | Write-Host
+            exit 1
+          }
+          Write-Host "OK: встроенный браузер на месте — $exe"
 
       - name: Подобрать версии всех пакетов под старый Rust (системно)
         # ГЛАВНЫЙ шаг вместо ловли пакетов по одному. У современного
